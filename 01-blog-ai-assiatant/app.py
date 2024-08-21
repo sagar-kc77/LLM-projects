@@ -62,43 +62,5 @@ def load_index() -> Any:
     return query_engine
 
 
-def main() -> None:
-    """Run the chatbot."""
-    
-    if "query_engine" not in st.session_state:
-        st.session_state.query_engine = load_index()
-        
-    st.title("Chat with BlogAI Assistant!!")
-    st.write("All about Snowpark for Data Engineering Quickstarts from quickstarts.snowflake.com. Ask away your questions!")
-
-    if "messages" not in st.session_state:
-        system_prompt = (
-            "Your purpose is to answer questions about specific documents only. "
-            "Please answer the user's questions based on what you know about the document. "
-            "If the question is outside scope of the document, please politely decline. "
-            "If you don't know the answer, say `I don't know`. "
-        )
-        st.session_state.messages = [{"role": "system", "content": system_prompt}]
-
-    for message in st.session_state.messages:
-        if message["role"] not in ["user", "assistant"]:
-            continue
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    if prompt := st.chat_input():
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            print("Querying query engine API...")
-            response = st.session_state.query_engine.query(prompt)
-            full_response = f"{response}"
-
-            message_placeholder.markdown(full_response)
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
-
 if __name__ == "__main__":
     main()
